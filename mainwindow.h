@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 
 	void setTemp(void);
 	void get_temp();
-	void readConfig(const QString &);
+	void readConfig();
 
 	QPalette dp;
 	QPalette ep;

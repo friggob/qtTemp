@@ -84,10 +84,10 @@
   </action>
   <action name="action_Change">
    <property name="text">
-    <string>&amp;Change</string>
+    <string>&amp;Reread cfg</string>
    </property>
    <property name="toolTip">
-    <string>Change background colour</string>
+    <string>Reread onfig file</string>
    </property>
   </action>
  </widget>

@@ -40,9 +40,9 @@ MainWindow::~MainWindow()
   delete ui;
 }
 
-void MainWindow::readConfig(const QString &conf){
-  qDebug() << conf;
-  QSettings cSettings(conf,QSettings::IniFormat);
+void MainWindow::readConfig(){
+  qDebug() << cFile;
+  QSettings cSettings(cFile,QSettings::IniFormat);
   cSettings.beginGroup("main");
   const QStringList mCfg = cSettings.childKeys();
   foreach (const QString &key, mCfg){
@@ -141,6 +141,6 @@ void MainWindow::on_action_Update_triggered()
 
 void MainWindow::on_action_Change_triggered()
 {
-  readConfig(cFile);
+  readConfig();
   emit testNet();
 }
