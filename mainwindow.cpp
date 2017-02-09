@@ -25,12 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
   ep = dp;
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
   dp.setColor(QPalette::Background, QColor("#CCFFCC"));
+  hPi = "10.10.10.10";
+  hTemp = "z.jfo.im";
 
   addAction(ui->action_Update);
   addAction(ui->action_Change);
   addAction(s);
   addAction(ui->action_Quit);
 
+  readConfig();
   getTempNet();
   testNet();
 }
@@ -41,13 +44,19 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::readConfig(){
-  qDebug() << cFile;
-  QSettings cSettings(cFile,QSettings::IniFormat);
-  cSettings.beginGroup("main");
-  const QStringList mCfg = cSettings.childKeys();
-  foreach (const QString &key, mCfg){
-	qDebug() << "Key:" << key << " Value:" << cSettings.value(key);
+  QSettings *cSettings = new QSettings("JFO Soft","qtTemp");
+  cSettings->sync();
+  cSettings->beginGroup("net");
+
+  if(cSettings->value("hPi").isValid()){
+	hPi = cSettings->value("hPi").toString();
+	qDebug() << "Setting hPi to" << hPi;
   }
+  if(cSettings->value("hTemp").isValid()){
+	hTemp = cSettings->value("hTemp").toString();
+	qDebug() << "Setting hTemp to" << hTemp;
+  }
+  cSettings->endGroup();
 }
 
 void MainWindow::setTemp(){
@@ -66,7 +75,7 @@ void MainWindow::getTempNet(){
 
   socket = new QTcpSocket(this);
 
-  socket->connectToHost("z.jfo.im", 1313);
+  socket->connectToHost(hTemp, 1313);
 
   if(socket->waitForConnected(3000)){
 	qDebug() << "Connected!";
@@ -96,7 +105,7 @@ void MainWindow::testNet(){
 
   setAutoFillBackground(true);
 
-  s->connectToHost("10.10.10.10",22);
+  s->connectToHost(hPi,22);
 
   if(s->waitForConnected(3000)){
 	qDebug() << "Pi is up!";

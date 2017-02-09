@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
   public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
-	QString cFile = "~/.config/Temp/temp.cfg";
+	QString cFile = "/home/fredrik/.config/Temp/temp.cfg";
 
   private:
 	Ui::MainWindow *ui;
