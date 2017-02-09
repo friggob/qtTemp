@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSettings>
+#include <QMouseEvent>
 
 namespace Ui {
   class MainWindow;
@@ -23,14 +24,19 @@ class MainWindow : public QMainWindow
 	void setTemp(void);
 	void get_temp();
 	void readConfig();
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+
+	int m_nMouseClick_X_Coordinate;
+	int m_nMouseClick_Y_Coordinate;
+	int pPi;
+	int pTemp;
 
 	QPalette dp;
 	QPalette ep;
 	QString last_temp;
 	QString temp;
 	QString hPi;
-	int pPi;
-	int pTemp;
 	QString hTemp;
 	QTcpSocket *socket;
 
