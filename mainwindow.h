@@ -16,7 +16,6 @@ class MainWindow : public QMainWindow
   public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
-	QString cFile = "/home/fredrik/.config/Temp/temp.cfg";
 
   private:
 	Ui::MainWindow *ui;
@@ -30,6 +29,8 @@ class MainWindow : public QMainWindow
 	QString last_temp;
 	QString temp;
 	QString hPi;
+	int pPi;
+	int pTemp;
 	QString hTemp;
 	QTcpSocket *socket;
 

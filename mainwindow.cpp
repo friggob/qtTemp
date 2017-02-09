@@ -25,8 +25,10 @@ MainWindow::MainWindow(QWidget *parent) :
   ep = dp;
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
   dp.setColor(QPalette::Background, QColor("#CCFFCC"));
-  hPi = "10.10.10.10";
+  hPi = "www.google.se";
+  pPi = 80;
   hTemp = "z.jfo.im";
+  pTemp = 1313;
 
   addAction(ui->action_Update);
   addAction(ui->action_Change);
@@ -52,6 +54,10 @@ void MainWindow::readConfig(){
 	hPi = cSettings->value("hPi").toString();
 	qDebug() << "Setting hPi to" << hPi;
   }
+  if(cSettings->value("pPi").isValid()){
+	pPi = cSettings->value("pPi").toInt();
+	qDebug() << "Setting pPi to" << pPi;
+  }
   if(cSettings->value("hTemp").isValid()){
 	hTemp = cSettings->value("hTemp").toString();
 	qDebug() << "Setting hTemp to" << hTemp;
@@ -75,7 +81,7 @@ void MainWindow::getTempNet(){
 
   socket = new QTcpSocket(this);
 
-  socket->connectToHost(hTemp, 1313);
+  socket->connectToHost(hTemp, pTemp);
 
   if(socket->waitForConnected(3000)){
 	qDebug() << "Connected!";
@@ -105,7 +111,7 @@ void MainWindow::testNet(){
 
   setAutoFillBackground(true);
 
-  s->connectToHost(hPi,22);
+  s->connectToHost(hPi,pPi);
 
   if(s->waitForConnected(3000)){
 	qDebug() << "Pi is up!";
