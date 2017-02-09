@@ -141,6 +141,6 @@ void MainWindow::on_action_Update_triggered()
 
 void MainWindow::on_action_Change_triggered()
 {
-  emit testNet();
   readConfig(cFile);
+  emit testNet();
 }
