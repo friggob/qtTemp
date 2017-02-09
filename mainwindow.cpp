@@ -47,7 +47,6 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::readConfig(){
-
   QVariant sValue;
 
   QSettings *cSettings = new QSettings("JFO Soft","qtTemp");
