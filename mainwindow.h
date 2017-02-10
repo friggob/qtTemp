@@ -49,6 +49,7 @@ class MainWindow : public QMainWindow
 	QString hTemp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
+	QString version = "0.12 BETA";
 
 /*
   protected:
@@ -64,6 +65,7 @@ class MainWindow : public QMainWindow
 	void on_actionSet_host_triggered();
 	void on_actionSavecfg_triggered();
 	void on_actionPrint_triggered();
+	void on_action_About_triggered();
 };
 
 #endif // MAINWINDOW_H

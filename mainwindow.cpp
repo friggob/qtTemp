@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QDebug>
 #include <QFile>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -19,8 +20,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
   QAction *s = new QAction(this);
   QAction *s1 = new QAction(this);
+  QAction *s2 = new QAction(this);
   s->setSeparator(true);
   s1->setSeparator(true);
+  s2->setSeparator(true);
 
   ui->setupUi(this);
 
@@ -42,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
   addAction(ui->actionSavecfg);
   addAction(ui->actionPrint);
   addAction(s);
+  addAction(ui->action_About);
+  addAction(s2);
   addAction(ui->action_Quit);
 
   readConfig();
@@ -215,7 +220,6 @@ void MainWindow::on_actionSet_host_triggered()
   hd->setpTemp(pTemp);
 
   hd->show();
-  qDebug() << "Set host closed";
 }
 
 void MainWindow::on_actionSavecfg_triggered()
@@ -238,4 +242,12 @@ void MainWindow::on_actionPrint_triggered()
   qDebug() << "pPi =" << pPi;
   qDebug() << "hTemp =" << hTemp;
   qDebug() << "pTemp =" << pTemp;
+}
+
+void MainWindow::on_action_About_triggered()
+{
+  QString Message;
+  Message = "Temp version " + version;
+  Message += "\nCreated by gh@jfo.im\n";
+  QMessageBox::about(NULL,"About Temp",Message);
 }
