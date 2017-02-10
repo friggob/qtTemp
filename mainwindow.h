@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "hinfo.h"
 #include "hostdialog.h"
 #include <QMainWindow>
 #include <QTcpSocket>
@@ -20,10 +21,7 @@ class MainWindow : public QMainWindow
 	~MainWindow();
 
   public slots:
-	void updatepTemp(int);
-	void updatepPi(int);
-	void updatehTemp(const QString);
-	void updatehPi(const QString);
+	void updateHosts(hInfo);
 
   private:
 	Ui::MainWindow *ui;
@@ -31,25 +29,23 @@ class MainWindow : public QMainWindow
 	hostDialog *hd;
 
 	void setTemp(void);
-	void get_temp();
+	//void get_temp();
 	void readConfig();
+	void createMenu();
 	void mousePressEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 
 	int m_nMouseClick_X_Coordinate;
 	int m_nMouseClick_Y_Coordinate;
-	int pPi;
-	int pTemp;
 
+	hInfo hi;
 	QPalette dp;
 	QPalette ep;
 	QString last_temp;
 	QString temp;
-	QString hPi;
-	QString hTemp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	QString version = "0.12 BETA";
+	QString version = "0.14 BETA";
 
 /*
   protected:

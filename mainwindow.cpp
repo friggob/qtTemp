@@ -18,12 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   cSettings = new QSettings("JFO Soft","qtTemp");
 
-  QAction *s = new QAction(this);
-  QAction *s1 = new QAction(this);
-  QAction *s2 = new QAction(this);
-  s->setSeparator(true);
-  s1->setSeparator(true);
-  s2->setSeparator(true);
+  hd = new hostDialog(this);
+  QObject::connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
 
   ui->setupUi(this);
 
@@ -33,10 +29,31 @@ MainWindow::MainWindow(QWidget *parent) :
   ep = dp;
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
   dp.setColor(QPalette::Background, QColor("#CCFFCC"));
-  hPi = "www.google.se";
-  pPi = 80;
-  hTemp = "z.jfo.im";
-  pTemp = 1313;
+
+  hi.hMon = "www.google.se";
+  hi.pMon = 80;
+  hi.hTemp = "z.jfo.im";
+  hi.pTemp = 1313;
+
+  createMenu();
+  readConfig();
+  getTempNet();
+  testNet();
+}
+
+MainWindow::~MainWindow()
+{
+  delete ui;
+}
+
+void MainWindow::createMenu(){
+
+  QAction *s = new QAction(this);
+  QAction *s1 = new QAction(this);
+  QAction *s2 = new QAction(this);
+  s->setSeparator(true);
+  s1->setSeparator(true);
+  s2->setSeparator(true);
 
   addAction(ui->action_Update);
   addAction(ui->actionSet_host);
@@ -49,14 +66,6 @@ MainWindow::MainWindow(QWidget *parent) :
   addAction(s2);
   addAction(ui->action_Quit);
 
-  readConfig();
-  getTempNet();
-  testNet();
-}
-
-MainWindow::~MainWindow()
-{
-  delete ui;
 }
 
 void MainWindow::readConfig(){
@@ -67,21 +76,21 @@ void MainWindow::readConfig(){
 
   qDebug() << cSettings->fileName();
 
-  if((sValue = cSettings->value("hPi")).isValid()){
-	hPi = sValue.toString();
-	qDebug() << "Setting hPi to" << hPi;
+  if((sValue = cSettings->value("hMon")).isValid()){
+	hi.hMon = sValue.toString();
+	qDebug() << "Setting hPi to" << hi.hMon;
   }
-  if((sValue = cSettings->value("pPi")).isValid()){
-	pPi = sValue.toInt();
-	qDebug() << "Setting pPi to" << pPi;
+  if((sValue = cSettings->value("pMon")).isValid()){
+	hi.pMon = sValue.toInt();
+	qDebug() << "Setting pPi to" << hi.pMon;
   }
   if((sValue = cSettings->value("hTemp")).isValid()){
-	hTemp = sValue.toString();
-	qDebug() << "Setting hTemp to" << hTemp;
+	hi.hTemp = sValue.toString();
+	qDebug() << "Setting hTemp to" << hi.hTemp;
   }
   if((sValue = cSettings->value("pTemp")).isValid()){
-	pTemp = sValue.toInt();
-	qDebug() << "Setting pTemp to" << pTemp;
+	hi.pTemp = sValue.toInt();
+	qDebug() << "Setting pTemp to" << hi.pTemp;
   }
   cSettings->endGroup();
 }
@@ -102,7 +111,7 @@ void MainWindow::getTempNet(){
 
   socket = new QTcpSocket(this);
 
-  socket->connectToHost(hTemp, pTemp);
+  socket->connectToHost(hi.hTemp, hi.pTemp);
 
   if(socket->waitForConnected(3000)){
 	qDebug() << "Connected!";
@@ -132,7 +141,7 @@ void MainWindow::testNet(){
 
   setAutoFillBackground(true);
 
-  s->connectToHost(hPi,pPi);
+  s->connectToHost(hi.hMon,hi.pMon);
 
   if(s->waitForConnected(3000)){
 	qDebug() << "Pi is up!";
@@ -144,6 +153,7 @@ void MainWindow::testNet(){
   }
 }
 
+/*
 void MainWindow::get_temp()
 {
   QFile file("/home/fredrik/tmp/last-temp.txt");
@@ -163,6 +173,7 @@ void MainWindow::get_temp()
 
   file.close();
 }
+*/
 
 void MainWindow::on_action_Quit_triggered()
 {
@@ -190,34 +201,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   move(event->globalX()-m_nMouseClick_X_Coordinate,event->globalY()-m_nMouseClick_Y_Coordinate);
 }
 
-void MainWindow::updatepPi(int port){
-  pPi = port;
-}
-
-void MainWindow::updatepTemp(int port){
-  pTemp = port;
-}
-
-void MainWindow::updatehPi(const QString host){
-  hPi = host;
-}
-
-void MainWindow::updatehTemp(const QString host){
-  hTemp = host;
+void MainWindow::updateHosts(hInfo hosts){
+  hi = hosts;
+  qDebug() << "Hosts updated";
 }
 
 void MainWindow::on_actionSet_host_triggered()
 {
-  hd = new hostDialog(this);
-  QObject::connect(hd,SIGNAL(pPiChanged(int)),this,SLOT(updatepPi(int)));
-  QObject::connect(hd,SIGNAL(pTempChanged(int)),this,SLOT(updatepTemp(int)));
-  QObject::connect(hd,SIGNAL(hTempChanged(QString)),this,SLOT(updatehTemp(QString)));
-  QObject::connect(hd,SIGNAL(hPiChanged(QString)),this,SLOT(updatehPi(QString)));
-
-  hd->sethPi(hPi);
-  hd->setpPi(pPi);
-  hd->sethTemp(hTemp);
-  hd->setpTemp(pTemp);
+  hd->setHosts(hi);
 
   hd->show();
 }
@@ -227,10 +218,10 @@ void MainWindow::on_actionSavecfg_triggered()
   cSettings->sync();
   cSettings->beginGroup("net");
 
-  cSettings->setValue("hPi",hPi);
-  cSettings->setValue("pPi",pPi);
-  cSettings->setValue("hTemp",hTemp);
-  cSettings->setValue("pTemp",pTemp);
+  cSettings->setValue("hMon",hi.hMon);
+  cSettings->setValue("pMon",hi.pMon);
+  cSettings->setValue("hTemp",hi.hTemp);
+  cSettings->setValue("pTemp",hi.pTemp);
 
   cSettings->endGroup();
   cSettings->sync();
@@ -238,10 +229,10 @@ void MainWindow::on_actionSavecfg_triggered()
 
 void MainWindow::on_actionPrint_triggered()
 {
-  qDebug() << "hPi =" << hPi;
-  qDebug() << "pPi =" << pPi;
-  qDebug() << "hTemp =" << hTemp;
-  qDebug() << "pTemp =" << pTemp;
+  qDebug() << "hPi =" << hi.hMon;
+  qDebug() << "pPi =" << hi.pMon;
+  qDebug() << "hTemp =" << hi.hTemp;
+  qDebug() << "pTemp =" << hi.pTemp;
 }
 
 void MainWindow::on_action_About_triggered()

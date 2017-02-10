@@ -14,20 +14,12 @@ hostDialog::~hostDialog()
   delete ui;
 }
 
-void hostDialog::sethPi(const QString host){
-  ui->hPiEdit->setText(host);
-}
-
-void hostDialog::setpPi(const int port){
-  ui->pPiEdit->setText(QString::number(port));
-}
-
-void hostDialog::sethTemp(const QString host){
-  ui->hTempEdit->setText(host);
-}
-
-void hostDialog::setpTemp(const int port){
-  ui->pTempEdit->setText(QString::number(port));
+void hostDialog::setHosts(hInfo hosts){
+  h = hosts;
+  ui->hPiEdit->setText(h.hMon);
+  ui->pPiEdit->setText(QString::number(h.pMon));
+  ui->hTempEdit->setText(h.hTemp);
+  ui->pTempEdit->setText(QString::number(h.pTemp));
 }
 
 void hostDialog::on_buttonBox_accepted()
@@ -37,29 +29,25 @@ void hostDialog::on_buttonBox_accepted()
 
   if((port = ui->pPiEdit->text()) != ""){
 	if(port.toInt() != 0){
-	  emit pPiChanged(port.toInt());
+	  h.pMon = port.toInt();
 	}
   }
   if((port = ui->pTempEdit->text()) != ""){
 	if(port.toInt() != 0){
-	  emit pTempChanged(port.toInt());
+	  h.pTemp = port.toInt();
 	}
   }
   if((host = ui->hPiEdit->text()) != ""){
-	emit hPiChanged(host);
+	h.hMon = host;
   }
   if((host = ui->hTempEdit->text()) != ""){
-	emit hTempChanged(host);
+	h.hTemp = host;
   }
+  emit hostsChanged(h);
   this->close();
 }
 
 void hostDialog::on_buttonBox_rejected()
 {
 	this->close();
-}
-
-void hostDialog::on_hPiEdit_returnPressed()
-{
-  return;
 }

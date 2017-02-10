@@ -1,6 +1,7 @@
 #ifndef HOSTDIALOG_H
 #define HOSTDIALOG_H
 
+#include "hinfo.h"
 #include <QDialog>
 #include <QMainWindow>
 
@@ -15,26 +16,18 @@ class hostDialog : public QDialog
   public:
 	explicit hostDialog(QWidget *parent = 0);
 	~hostDialog();
-	void sethPi(const QString);
-	void setpPi(const int);
-	void sethTemp(const QString);
-	void setpTemp(const int);
+	void setHosts(hInfo);
 
   private slots:
 	void on_buttonBox_accepted();
-
 	void on_buttonBox_rejected();
-
-	void on_hPiEdit_returnPressed();
 
   private:
 	Ui::hostDialog *ui;
+	hInfo h;
 
   signals:
-	void pPiChanged(int);
-	void pTempChanged(int);
-	void hTempChanged(QString);
-	void hPiChanged(QString);
+	void hostsChanged(hInfo);
 };
 
 #endif // HOSTDIALOG_H
