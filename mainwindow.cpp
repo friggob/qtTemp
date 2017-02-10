@@ -15,8 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(timer,SIGNAL(timeout()), this, SLOT(testNet()));
   timer->start(30 * 1000);
 
+  cSettings = new QSettings("JFO Soft","qtTemp");
+
   QAction *s = new QAction(this);
+  QAction *s1 = new QAction(this);
   s->setSeparator(true);
+  s1->setSeparator(true);
 
   ui->setupUi(this);
 
@@ -32,7 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
   pTemp = 1313;
 
   addAction(ui->action_Update);
+  addAction(ui->actionSet_host);
+  addAction(s1);
   addAction(ui->action_Change);
+  addAction(ui->actionSavecfg);
+  addAction(ui->actionPrint);
   addAction(s);
   addAction(ui->action_Quit);
 
@@ -49,7 +57,6 @@ MainWindow::~MainWindow()
 void MainWindow::readConfig(){
   QVariant sValue;
 
-  QSettings *cSettings = new QSettings("JFO Soft","qtTemp");
   cSettings->sync();
   cSettings->beginGroup("net");
 
@@ -176,4 +183,59 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   move(event->globalX()-m_nMouseClick_X_Coordinate,event->globalY()-m_nMouseClick_Y_Coordinate);
+}
+
+void MainWindow::updatepPi(int port){
+  pPi = port;
+}
+
+void MainWindow::updatepTemp(int port){
+  pTemp = port;
+}
+
+void MainWindow::updatehPi(const QString host){
+  hPi = host;
+}
+
+void MainWindow::updatehTemp(const QString host){
+  hTemp = host;
+}
+
+void MainWindow::on_actionSet_host_triggered()
+{
+  hd = new hostDialog(this);
+  QObject::connect(hd,SIGNAL(pPiChanged(int)),this,SLOT(updatepPi(int)));
+  QObject::connect(hd,SIGNAL(pTempChanged(int)),this,SLOT(updatepTemp(int)));
+  QObject::connect(hd,SIGNAL(hTempChanged(QString)),this,SLOT(updatehTemp(QString)));
+  QObject::connect(hd,SIGNAL(hPiChanged(QString)),this,SLOT(updatehPi(QString)));
+
+  hd->sethPi(hPi);
+  hd->setpPi(pPi);
+  hd->sethTemp(hTemp);
+  hd->setpTemp(pTemp);
+
+  hd->show();
+  qDebug() << "Set host closed";
+}
+
+void MainWindow::on_actionSavecfg_triggered()
+{
+  cSettings->sync();
+  cSettings->beginGroup("net");
+
+  cSettings->setValue("hPi",hPi);
+  cSettings->setValue("pPi",pPi);
+  cSettings->setValue("hTemp",hTemp);
+  cSettings->setValue("pTemp",pTemp);
+
+  cSettings->endGroup();
+  cSettings->sync();
+}
+
+void MainWindow::on_actionPrint_triggered()
+{
+  qDebug() << "hPi =" << hPi;
+  qDebug() << "pPi =" << pPi;
+  qDebug() << "hTemp =" << hTemp;
+  qDebug() << "pTemp =" << pTemp;
 }

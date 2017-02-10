@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "hostdialog.h"
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSettings>
@@ -18,8 +19,16 @@ class MainWindow : public QMainWindow
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+  public slots:
+	void updatepTemp(int);
+	void updatepPi(int);
+	void updatehTemp(const QString);
+	void updatehPi(const QString);
+
   private:
 	Ui::MainWindow *ui;
+
+	hostDialog *hd;
 
 	void setTemp(void);
 	void get_temp();
@@ -38,6 +47,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QString hPi;
 	QString hTemp;
+	QSettings *cSettings;
 	QTcpSocket *socket;
 
 /*
@@ -51,6 +61,9 @@ class MainWindow : public QMainWindow
 	void getTempNet();
 	void on_action_Change_triggered();
 	void testNet();
+	void on_actionSet_host_triggered();
+	void on_actionSavecfg_triggered();
+	void on_actionPrint_triggered();
 };
 
 #endif // MAINWINDOW_H

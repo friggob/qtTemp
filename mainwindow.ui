@@ -90,6 +90,27 @@
     <string>Reread onfig file</string>
    </property>
   </action>
+  <action name="actionSet_host">
+   <property name="text">
+    <string>Set &amp;host</string>
+   </property>
+   <property name="toolTip">
+    <string>Set hosts for onitoring and temp fetching</string>
+   </property>
+  </action>
+  <action name="actionSavecfg">
+   <property name="text">
+    <string>&amp;Save cfg</string>
+   </property>
+   <property name="toolTip">
+    <string>Save active config</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="text">
+    <string>Print</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
