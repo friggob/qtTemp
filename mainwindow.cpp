@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
 
   setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint);
+
   dp = ui->label->palette();
   ep = dp;
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
@@ -46,21 +47,29 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::readConfig(){
+  QVariant sValue;
+
   QSettings *cSettings = new QSettings("JFO Soft","qtTemp");
   cSettings->sync();
   cSettings->beginGroup("net");
 
-  if(cSettings->value("hPi").isValid()){
-	hPi = cSettings->value("hPi").toString();
+  qDebug() << cSettings->fileName();
+
+  if((sValue = cSettings->value("hPi")).isValid()){
+	hPi = sValue.toString();
 	qDebug() << "Setting hPi to" << hPi;
   }
-  if(cSettings->value("pPi").isValid()){
-	pPi = cSettings->value("pPi").toInt();
+  if((sValue = cSettings->value("pPi")).isValid()){
+	pPi = sValue.toInt();
 	qDebug() << "Setting pPi to" << pPi;
   }
-  if(cSettings->value("hTemp").isValid()){
-	hTemp = cSettings->value("hTemp").toString();
+  if((sValue = cSettings->value("hTemp")).isValid()){
+	hTemp = sValue.toString();
 	qDebug() << "Setting hTemp to" << hTemp;
+  }
+  if((sValue = cSettings->value("pTemp")).isValid()){
+	pTemp = sValue.toInt();
+	qDebug() << "Setting pTemp to" << pTemp;
   }
   cSettings->endGroup();
 }
@@ -158,4 +167,13 @@ void MainWindow::on_action_Change_triggered()
 {
   readConfig();
   emit testNet();
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+  m_nMouseClick_X_Coordinate = event->x();
+  m_nMouseClick_Y_Coordinate = event->y();
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event) {
+  move(event->globalX()-m_nMouseClick_X_Coordinate,event->globalY()-m_nMouseClick_Y_Coordinate);
 }
