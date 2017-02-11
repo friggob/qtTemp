@@ -51,11 +51,6 @@ class MainWindow : public QMainWindow
 	QTcpSocket *socket;
 	QString version = "0.2 BETA";
 
-/*
-  protected:
-	void mouseReleaseEvent(QMouseEvent* event);
-*/
-
   private slots:
 	void on_action_Quit_triggered();
 	void on_action_Update_triggered();
