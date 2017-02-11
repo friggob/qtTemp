@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	QString version = "0.2 BETA";
+	QString version = "0.2.1 BETA";
 
   private slots:
 	void on_action_Quit_triggered();

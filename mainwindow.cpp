@@ -158,6 +158,8 @@ void MainWindow::testNet(){
 
 void MainWindow::on_action_Quit_triggered()
 {
+  df->close();
+  hd->close();
   close();
 }
 
