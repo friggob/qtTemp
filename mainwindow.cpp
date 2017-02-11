@@ -21,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
   hd = new hostDialog(this);
   QObject::connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
 
+  df = new debugForm(this);
+  QObject::connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
+
   ui->setupUi(this);
 
   setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint);
@@ -93,6 +96,8 @@ void MainWindow::readConfig(){
 	qDebug() << "Setting pTemp to" << hi.pTemp;
   }
   cSettings->endGroup();
+
+  emit hInfoChanged(hi);
 }
 
 void MainWindow::setTemp(){
@@ -203,13 +208,13 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 
 void MainWindow::updateHosts(hInfo hosts){
   hi = hosts;
+  emit hInfoChanged(hi);
   qDebug() << "Hosts updated";
 }
 
 void MainWindow::on_actionSet_host_triggered()
 {
   hd->setHosts(hi);
-
   hd->show();
 }
 
@@ -233,6 +238,8 @@ void MainWindow::on_actionPrint_triggered()
   qDebug() << "pPi =" << hi.pMon;
   qDebug() << "hTemp =" << hi.hTemp;
   qDebug() << "pTemp =" << hi.pTemp;
+  df->show();
+  emit hInfoChanged(hi);
 }
 
 void MainWindow::on_action_About_triggered()

@@ -3,6 +3,7 @@
 
 #include "hinfo.h"
 #include "hostdialog.h"
+#include "debugform.h"
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSettings>
@@ -23,10 +24,14 @@ class MainWindow : public QMainWindow
   public slots:
 	void updateHosts(hInfo);
 
+  signals:
+	void hInfoChanged(hInfo);
+
   private:
 	Ui::MainWindow *ui;
 
 	hostDialog *hd;
+	debugForm *df;
 
 	void setTemp(void);
 	//void get_temp();
