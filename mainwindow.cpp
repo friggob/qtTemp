@@ -6,23 +6,23 @@
 #include <QDebug>
 #include <QFile>
 #include <QMessageBox>
+#include <QToolTip>
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
 {
   QTimer *timer = new QTimer(this);
+  cSettings = new QSettings("JFO Soft","qtTemp");
+  hd = new hostDialog(this);
+  df = new debugForm(this);
+
+  connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
+  connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
   connect(timer,SIGNAL(timeout()), this, SLOT(getTempNet()));
   connect(timer,SIGNAL(timeout()), this, SLOT(testNet()));
+
   timer->start(30 * 1000);
-
-  cSettings = new QSettings("JFO Soft","qtTemp");
-
-  hd = new hostDialog(this);
-  QObject::connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
-
-  df = new debugForm(this);
-  QObject::connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
 
   ui->setupUi(this);
 
@@ -32,11 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ep = dp;
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
   dp.setColor(QPalette::Background, QColor("#CCFFCC"));
-
-  hi.hMon = "www.google.se";
-  hi.pMon = 80;
-  hi.hTemp = "z.jfo.im";
-  hi.pTemp = 1313;
 
   createMenu();
   readConfig();
@@ -51,6 +46,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::createMenu(){
 
+  QList<QAction*> a;
+
   QAction *s = new QAction(this);
   QAction *s1 = new QAction(this);
   QAction *s2 = new QAction(this);
@@ -58,17 +55,18 @@ void MainWindow::createMenu(){
   s1->setSeparator(true);
   s2->setSeparator(true);
 
-  addAction(ui->action_Update);
-  addAction(ui->actionSet_host);
-  addAction(s1);
-  addAction(ui->action_Change);
-  addAction(ui->actionSavecfg);
-  addAction(ui->actionPrint);
-  addAction(s);
-  addAction(ui->action_About);
-  addAction(s2);
-  addAction(ui->action_Quit);
+  a += ui->action_Update;
+  a += ui->actionSet_host;
+  a += s;
+  a += ui->action_Change;
+  a += ui->actionSavecfg;
+  a += ui->actionPrint;
+  a += s1;
+  a += ui->action_About;
+  a += s2;
+  a += ui->action_Quit;
 
+  addActions(a);
 }
 
 void MainWindow::readConfig(){
@@ -158,28 +156,6 @@ void MainWindow::testNet(){
   }
 }
 
-/*
-void MainWindow::get_temp()
-{
-  QFile file("/home/fredrik/tmp/last-temp.txt");
-
-  if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
-	temp = "-99";
-
-  QTextStream inf(&file);
-
-  double nt = inf.readLine().toDouble();
-
-  temp = QString().asprintf("% 2.2f",nt);
-
-  qDebug() << "Temp is" << temp;
-
-  setTemp();
-
-  file.close();
-}
-*/
-
 void MainWindow::on_action_Quit_triggered()
 {
   close();
@@ -214,8 +190,15 @@ void MainWindow::updateHosts(hInfo hosts){
 
 void MainWindow::on_actionSet_host_triggered()
 {
+  QPoint p;
+
+  p.setX(this->x());
+  p.setY(this->y()+this->height());
+
   hd->setHosts(hi);
+
   hd->show();
+  hd->move(p);
 }
 
 void MainWindow::on_actionSavecfg_triggered()
@@ -234,11 +217,14 @@ void MainWindow::on_actionSavecfg_triggered()
 
 void MainWindow::on_actionPrint_triggered()
 {
-  qDebug() << "hPi =" << hi.hMon;
-  qDebug() << "pPi =" << hi.pMon;
-  qDebug() << "hTemp =" << hi.hTemp;
-  qDebug() << "pTemp =" << hi.pTemp;
+  QPoint p;
+
+  p.setX(this->x()-df->width());
+  p.setY(this->y());
+
   df->show();
+  df->move(p);
+
   emit hInfoChanged(hi);
 }
 

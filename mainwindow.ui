@@ -108,7 +108,10 @@
   </action>
   <action name="actionPrint">
    <property name="text">
-    <string>Print</string>
+    <string>Show cfg</string>
+   </property>
+   <property name="toolTip">
+    <string>Show active config</string>
    </property>
   </action>
   <action name="action_About">

@@ -34,7 +34,6 @@ class MainWindow : public QMainWindow
 	debugForm *df;
 
 	void setTemp(void);
-	//void get_temp();
 	void readConfig();
 	void createMenu();
 	void mousePressEvent(QMouseEvent *event);
@@ -50,7 +49,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	QString version = "0.14 BETA";
+	QString version = "0.2 BETA";
 
 /*
   protected:
