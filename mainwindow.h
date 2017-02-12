@@ -3,6 +3,7 @@
 
 #include "hinfo.h"
 #include "hostdialog.h"
+#include "debugform.h"
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSettings>
@@ -23,13 +24,16 @@ class MainWindow : public QMainWindow
   public slots:
 	void updateHosts(hInfo);
 
+  signals:
+	void hInfoChanged(hInfo);
+
   private:
 	Ui::MainWindow *ui;
 
 	hostDialog *hd;
+	debugForm *df;
 
 	void setTemp(void);
-	//void get_temp();
 	void readConfig();
 	void createMenu();
 	void mousePressEvent(QMouseEvent *event);
@@ -45,12 +49,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	QString version = "0.14 BETA";
-
-/*
-  protected:
-	void mouseReleaseEvent(QMouseEvent* event);
-*/
+	const QString version = "1.0.0";
 
   private slots:
 	void on_action_Quit_triggered();

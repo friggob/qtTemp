@@ -15,11 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     hostdialog.cpp \
-    hinfo.cpp
+    hinfo.cpp \
+    debugform.cpp
 
 HEADERS  += mainwindow.h \
     hostdialog.h \
-    hinfo.h
+    hinfo.h \
+    debugform.h
 
 FORMS    += mainwindow.ui \
-    hostdialog.ui
+    hostdialog.ui \
+    debugform.ui
