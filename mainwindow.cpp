@@ -233,7 +233,7 @@ void MainWindow::on_actionPrint_triggered()
 void MainWindow::on_action_About_triggered()
 {
   QString Message;
-  Message = "Temp version " + version;
+  Message = "Temp version v" + version;
   Message += "\n\nCreated by:\nFredrik Olausson <fredrik@bluppfisk.org>\n";
   QMessageBox::about(this,"About Temp",Message);
 }

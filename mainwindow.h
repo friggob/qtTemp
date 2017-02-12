@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	const QString version = "0.2.1 BETA";
+	const QString version = "1.0.0";
 
   private slots:
 	void on_action_Quit_triggered();
