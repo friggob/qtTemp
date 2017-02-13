@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>Temp</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="qttemp.qrc">
+    <normaloff>:/icons/8451.png</normaloff>:/icons/8451.png</iconset>
+  </property>
   <property name="locale">
    <locale language="English" country="Sweden"/>
   </property>
@@ -132,6 +136,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="qttemp.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -50,7 +50,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	QVersionNumber *version = new QVersionNumber(1,1,0);
+	QVersionNumber *version = new QVersionNumber(1,1,1);
 
   private slots:
 	void on_action_Quit_triggered();

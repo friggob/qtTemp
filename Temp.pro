@@ -26,3 +26,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     hostdialog.ui \
     debugform.ui
+
+RESOURCES += \
+    qttemp.qrc
