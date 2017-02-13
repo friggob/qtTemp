@@ -12,6 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
 {
+  qDebug() << APP_VERSION;
+  version = QVersionNumber::fromString(APP_VERSION);
   QTimer *timer = new QTimer(this);
   cSettings = new QSettings("JFO Soft","qtTemp");
   hd = new hostDialog(this);
@@ -237,7 +239,7 @@ void MainWindow::on_actionPrint_triggered()
 void MainWindow::on_action_About_triggered()
 {
   QString Message;
-  Message = "Temp version v" + version->toString();
+  Message = "Temp version v" + version.toString();
   Message += "\n\nCreated by:\nFredrik Olausson <fredrik@bluppfisk.org>\n";
   QMessageBox::about(this,"About Temp",Message);
 }

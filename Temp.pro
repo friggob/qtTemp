@@ -29,3 +29,19 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     qttemp.qrc
+
+VERSION = 1.1.1
+
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+
+win32:RC_ICONS += \
+    c.ico
+
+win32:QMAKE_TARGET_COMPANY += \
+    "JFO Soft"
+
+win32:QMAKE_TARGET_COPYRIGHT += \
+    "Fredrik Olausson <fredrik@bluppfisk.org>"
+
+win32:RC_LANG += \
+    0x041D
