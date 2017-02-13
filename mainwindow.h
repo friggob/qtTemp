@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
 	QSettings *cSettings;
 	QTcpSocket *socket;
 	QVersionNumber version;
+	QPoint oldPos;
 
   private slots:
 	void on_action_Quit_triggered();

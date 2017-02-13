@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+VERSION = 1.2.0
+
 QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -29,8 +31,6 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     qttemp.qrc
-
-VERSION = 1.1.1
 
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 

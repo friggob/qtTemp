@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
 {
-  qDebug() << APP_VERSION;
   version = QVersionNumber::fromString(APP_VERSION);
   QTimer *timer = new QTimer(this);
   cSettings = new QSettings("JFO Soft","qtTemp");
@@ -35,8 +34,12 @@ MainWindow::MainWindow(QWidget *parent) :
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
   dp.setColor(QPalette::Background, QColor("#CCFFCC"));
 
-  createMenu();
   readConfig();
+  if(!oldPos.isNull()){
+	qDebug() << "Moving window to" << oldPos;
+	this->move(oldPos);
+  }
+  createMenu();
   getTempNet();
   testNet();
 }
@@ -97,6 +100,12 @@ void MainWindow::readConfig(){
   if((sValue = cSettings->value("pTemp")).isValid()){
 	hi.pTemp = sValue.toInt();
 	qDebug() << "Setting pTemp to" << hi.pTemp;
+  }
+  cSettings->endGroup();
+  cSettings->beginGroup("main");
+  if((sValue = cSettings->value("winPos")).isValid()){
+	oldPos = sValue.toPoint();
+	qDebug() << "Setting pos to" << oldPos;
   }
   cSettings->endGroup();
 
@@ -219,6 +228,9 @@ void MainWindow::on_actionSavecfg_triggered()
   cSettings->setValue("hTemp",hi.hTemp);
   cSettings->setValue("pTemp",hi.pTemp);
 
+  cSettings->endGroup();
+  cSettings->beginGroup("main");
+  cSettings->setValue("winPos",this->pos());
   cSettings->endGroup();
   cSettings->sync();
 }
