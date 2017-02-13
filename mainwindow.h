@@ -8,6 +8,7 @@
 #include <QTcpSocket>
 #include <QSettings>
 #include <QMouseEvent>
+#include <QVersionNumber>
 
 namespace Ui {
   class MainWindow;
@@ -49,7 +50,7 @@ class MainWindow : public QMainWindow
 	QString temp;
 	QSettings *cSettings;
 	QTcpSocket *socket;
-	const QString version = "1.0.0";
+	QVersionNumber *version = new QVersionNumber(1,1,0);
 
   private slots:
 	void on_action_Quit_triggered();
@@ -61,6 +62,7 @@ class MainWindow : public QMainWindow
 	void on_actionSavecfg_triggered();
 	void on_actionPrint_triggered();
 	void on_action_About_triggered();
+	void on_actionOnTop_triggered();
 };
 
 #endif // MAINWINDOW_H

@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   ui->setupUi(this);
 
-  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint);
+  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::ToolTip);
 
   dp = ui->label->palette();
   ep = dp;
@@ -55,8 +55,11 @@ void MainWindow::createMenu(){
   s1->setSeparator(true);
   s2->setSeparator(true);
 
+  ui->actionOnTop->setChecked(true);
+
   a += ui->action_Update;
   a += ui->actionSet_host;
+  a += ui->actionOnTop;
   a += s;
   a += ui->action_Change;
   a += ui->actionSavecfg;
@@ -161,6 +164,7 @@ void MainWindow::on_action_Quit_triggered()
   df->close();
   hd->close();
   close();
+  QApplication::quit();
 }
 
 void MainWindow::on_action_Update_triggered()
@@ -233,7 +237,18 @@ void MainWindow::on_actionPrint_triggered()
 void MainWindow::on_action_About_triggered()
 {
   QString Message;
-  Message = "Temp version v" + version;
+  Message = "Temp version v" + version->toString();
   Message += "\n\nCreated by:\nFredrik Olausson <fredrik@bluppfisk.org>\n";
   QMessageBox::about(this,"About Temp",Message);
+}
+
+void MainWindow::on_actionOnTop_triggered()
+{
+  if(ui->actionOnTop->isChecked()){
+	this->setWindowFlags(this->windowFlags()|Qt::ToolTip);
+	this->show();
+  }else{
+	this->setWindowFlags(this->windowFlags()^Qt::ToolTip);
+	this->show();
+  }
 }

@@ -119,6 +119,17 @@
     <string>&amp;About</string>
    </property>
   </action>
+  <action name="actionOnTop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>OnTop</string>
+   </property>
+   <property name="toolTip">
+    <string>Always on top</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
