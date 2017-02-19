@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-VERSION = 1.2.0
+VERSION = 2.0.0
 
 QT       += core gui network
 
@@ -18,16 +18,19 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     hostdialog.cpp \
     hinfo.cpp \
-    debugform.cpp
+    debugform.cpp \
+    graphdialog.cpp
 
 HEADERS  += mainwindow.h \
     hostdialog.h \
     hinfo.h \
-    debugform.h
+    debugform.h \
+    graphdialog.h
 
 FORMS    += mainwindow.ui \
     hostdialog.ui \
-    debugform.ui
+    debugform.ui \
+    graphdialog.ui
 
 RESOURCES += \
     qttemp.qrc

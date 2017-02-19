@@ -4,6 +4,7 @@
 #include "hinfo.h"
 #include "hostdialog.h"
 #include "debugform.h"
+#include "graphdialog.h"
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSettings>
@@ -28,15 +29,19 @@ class MainWindow : public QMainWindow
   signals:
 	void hInfoChanged(hInfo);
 
+
   private:
 	Ui::MainWindow *ui;
 
 	hostDialog *hd;
 	debugForm *df;
+	graphDialog *gd;
 
 	void setTemp(void);
 	void readConfig();
 	void createMenu();
+	void setupRrd();
+	void updateRrd(QString);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 
@@ -52,6 +57,8 @@ class MainWindow : public QMainWindow
 	QTcpSocket *socket;
 	QVersionNumber version;
 	QPoint oldPos;
+	QString rrdCmdPath;
+	QString rrdPath;
 
   private slots:
 	void on_action_Quit_triggered();
@@ -64,6 +71,7 @@ class MainWindow : public QMainWindow
 	void on_actionPrint_triggered();
 	void on_action_About_triggered();
 	void on_actionOnTop_triggered();
+	void on_actionGraph_triggered();
 };
 
 #endif // MAINWINDOW_H

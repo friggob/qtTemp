@@ -7,6 +7,18 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QToolTip>
+#include <QStandardPaths>
+#include <QDir>
+#include <QProcess>
+#include <QDateTime>
+
+MainWindow::~MainWindow()
+{
+  delete hd;
+  delete df;
+  delete gd;
+  delete ui;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -17,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
   cSettings = new QSettings("JFO Soft","qtTemp");
   hd = new hostDialog(this);
   df = new debugForm(this);
+  gd = new graphDialog(this);
 
   connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
   connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
@@ -27,8 +40,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   ui->setupUi(this);
 
+#ifndef Q_OS_WIN
+  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+#else
   setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::ToolTip);
-
+#endif
   dp = ui->label->palette();
   ep = dp;
   ep.setColor(QPalette::Background, QColor("#FFCCCC"));
@@ -39,14 +55,74 @@ MainWindow::MainWindow(QWidget *parent) :
 	qDebug() << "Moving window to" << oldPos;
 	this->move(oldPos);
   }
+  setupRrd();
   createMenu();
   getTempNet();
   testNet();
 }
 
-MainWindow::~MainWindow()
-{
-  delete ui;
+void MainWindow::setupRrd(){
+  if(rrdPath.isNull() || rrdPath.isEmpty()){
+	QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+	qDebug() << "AppDataLocation:" << dir;
+	QDir d(dir);
+	if(!d.mkpath(d.absolutePath())){
+	  qWarning() << "Could not create appDataPath:" << dir;
+	}else{
+	  rrdPath = d.absoluteFilePath("Temp.rrd");
+	  qDebug() << "rrdPath:" << rrdPath;
+	}
+  }
+  if(rrdCmdPath.isNull() || rrdCmdPath.isEmpty()){
+#ifdef Q_OS_WIN
+	rrdCmdPath = "rrdtool.exe";
+#else
+	rrdCmdPath = "rrdtool";
+#endif
+  }
+  gd->setRrdCmd(rrdCmdPath);
+  QFileInfo fi(rrdPath);
+
+  if(!fi.exists()){
+	QProcess p;
+	QStringList rCa;
+	QDateTime t;
+
+	rCa << "create" << rrdPath
+		<< "-s" << "60"
+		<< "-b" << QString::number(QDateTime::currentDateTime().toTime_t()-1)
+		<< "DS:Temp:GAUGE:600:U:U"
+		<< "RRA:AVERAGE:0.5:1:60"
+		<< "RRA:AVERAGE:0.5:1:1440"
+		<< "RRA:AVERAGE:0.5:1:10080"
+		<< "RRA:AVERAGE:0.5:1:43200"
+		<< "RRA:AVERAGE:0.5:1:525600";
+
+	qDebug() << "rrd tool args:" << rCa;
+
+	p.setProgram(rrdCmdPath);
+	p.setArguments(rCa);
+	p.start(QIODevice::NotOpen);
+	if(!p.waitForFinished(3000)){
+	  qWarning() << "rrd database at:" << rrdPath << "could not be created";
+	}
+  }
+}
+
+void MainWindow::updateRrd(QString data){
+  QString now = QString::number(QDateTime::currentDateTime().toTime_t());
+  QStringList rCa;
+
+  rCa << "update"
+	  << rrdPath
+	  << now + ":" + data;
+
+  QFileInfo fi(rrdPath);
+  if(fi.isFile() && fi.isWritable()){
+	QProcess p;
+	p.startDetached(rrdCmdPath,rCa);
+	qDebug() << "rrdtool" << rCa;
+  }
 }
 
 void MainWindow::createMenu(){
@@ -59,12 +135,17 @@ void MainWindow::createMenu(){
   s->setSeparator(true);
   s1->setSeparator(true);
   s2->setSeparator(true);
-
+#ifndef Q_OS_WIN
+  //ui->actionOnTop->setChecked(true);
+#else
   ui->actionOnTop->setChecked(true);
-
+#endif
+  a += ui->actionGraph;
   a += ui->action_Update;
   a += ui->actionSet_host;
+#ifdef Q_OS_WIN
   a += ui->actionOnTop;
+#endif
   a += s;
   a += ui->action_Change;
   a += ui->actionSavecfg;
@@ -108,6 +189,16 @@ void MainWindow::readConfig(){
 	qDebug() << "Setting pos to" << oldPos;
   }
   cSettings->endGroup();
+  cSettings->beginGroup("rrd");
+  if((sValue = cSettings->value("rrdCmdPath")).isValid()){
+	rrdCmdPath = sValue.toString();
+	qDebug() << "Setting rrdCmdPath to" << rrdCmdPath;
+  }
+  if((sValue = cSettings->value("rrdPath")).isValid()){
+	rrdPath = sValue.toString();
+	qDebug() << "Setting rrdPath to" << rrdPath;
+  }
+  cSettings->endGroup();
 
   emit hInfoChanged(hi);
 }
@@ -138,6 +229,7 @@ void MainWindow::getTempNet(){
 
 	data = socket->readAll();
 
+	updateRrd(QString::fromLatin1(data.data()).trimmed());
 	nt = QString::fromLatin1(data.data()).toDouble();
 
 	temp = QString::asprintf("% 2.2f",nt);
@@ -232,6 +324,16 @@ void MainWindow::on_actionSavecfg_triggered()
   cSettings->beginGroup("main");
   cSettings->setValue("winPos",this->pos());
   cSettings->endGroup();
+
+  cSettings->beginGroup("rrd");
+  if(!rrdCmdPath.isEmpty() && !rrdCmdPath.isNull()){
+	cSettings->setValue("rrdCmdPath",rrdCmdPath);
+  }
+  if(!rrdPath.isEmpty() && !rrdPath.isNull()){
+	cSettings->setValue("rrdPath",rrdPath);
+  }
+  cSettings->endGroup();
+
   cSettings->sync();
 }
 
@@ -265,4 +367,12 @@ void MainWindow::on_actionOnTop_triggered()
 	this->setWindowFlags(this->windowFlags()^Qt::ToolTip);
 	this->show();
   }
+}
+
+void MainWindow::on_actionGraph_triggered()
+{
+//  QPixmap *pm = new QPixmap("/home/fredrik/temp.png");
+  gd->show();
+  gd->setRrdPath(rrdPath);
+  //  gd->setPixmap(pm);
 }

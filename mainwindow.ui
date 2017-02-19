@@ -77,6 +77,9 @@
    <property name="toolTip">
     <string>Exit application</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="action_Update">
    <property name="text">
@@ -132,6 +135,14 @@
    </property>
    <property name="toolTip">
     <string>Always on top</string>
+   </property>
+  </action>
+  <action name="actionGraph">
+   <property name="text">
+    <string>Graph</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>
