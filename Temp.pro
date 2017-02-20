@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-VERSION = 2.0.0
+VERSION = 2.1.0
 
 QT       += core gui network
 
@@ -12,7 +12,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Temp
 TEMPLATE = app
-
 
 SOURCES += main.cpp\
         mainwindow.cpp \

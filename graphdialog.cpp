@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QProcess>
+#include <QFileInfo>
+#include <QDir>
 
 graphDialog::graphDialog(QWidget *parent) :
   QDialog(parent),
@@ -30,11 +32,21 @@ void graphDialog::createPixmap(){
   if(rrdPath.isNull() || rrdPath.isEmpty()){
 	return;
   }
+
+  QFileInfo fi(rrdPath);
+  if(!fi.exists()){
+	  return;
+  }
+
+  QDir rrdDir = fi.absoluteDir();
+  QDir oldDir;
+
   QStringList rrdCmdArgs;
   QDateTime t;
   QByteArray ret;
 
   t.setTime_t(QDateTime::currentDateTime().toTime_t()-offset);
+
 
   rrdCmdArgs << "graph" << "-"
 			 <<"-S" << "60"
@@ -42,12 +54,13 @@ void graphDialog::createPixmap(){
 			<< "-h" << "250"
 			<< "-s" << QString::number(t.toTime_t())
 			<< "-e" << "now"
-			<< "DEF:temp="+rrdPath+":Temp:AVERAGE"
+			<< "DEF:temp="+fi.fileName()+":Temp:AVERAGE"
 			<< "LINE1:temp#0000FF"
 			<< "LINE1:0#FF0000";
 
   qDebug() << rrdCmdArgs;
 
+  QDir::setCurrent(rrdDir.absolutePath());
   QProcess *proc = new QProcess(this);
   proc->setProgram(rrdCmd);
   proc->setArguments(rrdCmdArgs);
@@ -68,6 +81,7 @@ void graphDialog::createPixmap(){
 
   proc->close();
   delete proc;
+  QDir::setCurrent(oldDir.absolutePath());
 }
 
 void graphDialog::setRrdPath(QString p){
@@ -117,7 +131,7 @@ void graphDialog::on_actionClose_triggered()
 void graphDialog::on_hourButton_clicked(bool checked)
 {
   if(checked){
-	offset = hour;
+	offset = ui->spinBox->value() * hour;
 	emit offsetChanged();
   }
 }
@@ -150,6 +164,14 @@ void graphDialog::on_yearButton_clicked(bool checked)
 {
   if(checked){
 	offset = year;
+	emit offsetChanged();
+  }
+}
+
+void graphDialog::on_spinBox_valueChanged(int arg1)
+{
+  if(ui->hourButton->isChecked()){
+	offset = arg1 * hour;
 	emit offsetChanged();
   }
 }

@@ -33,7 +33,9 @@ class graphDialog : public QDialog
 	void on_monthButton_clicked(bool checked);
 	void on_yearButton_clicked(bool checked);
 
-  private:
+	void on_spinBox_valueChanged(int arg1);
+
+private:
 	Ui::graphDialog *ui;
 	QPixmap *qpm;
 	QString rrdPath;

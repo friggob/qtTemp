@@ -19,7 +19,7 @@
    <enum>Qt::ActionsContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Current config</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">

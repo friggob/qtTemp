@@ -40,10 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
   ui->setupUi(this);
 
-#ifndef Q_OS_WIN
-  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+#ifdef Q_OS_WIN
+  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::ToolTip);
 #else
-  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::ToolTip);
+  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 #endif
   dp = ui->label->palette();
   ep = dp;
@@ -107,6 +107,7 @@ void MainWindow::setupRrd(){
 	  qWarning() << "rrd database at:" << rrdPath << "could not be created";
 	}
   }
+  gd->setRrdPath(rrdPath);
 }
 
 void MainWindow::updateRrd(QString data){
@@ -135,10 +136,10 @@ void MainWindow::createMenu(){
   s->setSeparator(true);
   s1->setSeparator(true);
   s2->setSeparator(true);
-#ifndef Q_OS_WIN
-  //ui->actionOnTop->setChecked(true);
-#else
+#ifdef Q_OS_WIN
   ui->actionOnTop->setChecked(true);
+#else
+  //ui->actionOnTop->setChecked(true);
 #endif
   a += ui->actionGraph;
   a += ui->action_Update;
@@ -371,8 +372,5 @@ void MainWindow::on_actionOnTop_triggered()
 
 void MainWindow::on_actionGraph_triggered()
 {
-//  QPixmap *pm = new QPixmap("/home/fredrik/temp.png");
   gd->show();
-  gd->setRrdPath(rrdPath);
-  //  gd->setPixmap(pm);
 }
