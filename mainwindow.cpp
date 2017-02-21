@@ -12,6 +12,10 @@
 #include <QProcess>
 #include <QDateTime>
 
+#ifdef Q_OS_WIN
+#include "windows.h"
+#endif
+
 MainWindow::~MainWindow()
 {
   delete hd;
@@ -40,10 +44,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   ui->setupUi(this);
 
-#ifdef Q_OS_WIN
-  setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::ToolTip);
-#else
   setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+#ifdef Q_OS_WIN
+  SetWindowPos(reinterpret_cast<HWND>(this->winId()), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 #endif
   dp = ui->label->palette();
   ep = dp;
@@ -362,10 +365,16 @@ void MainWindow::on_action_About_triggered()
 void MainWindow::on_actionOnTop_triggered()
 {
   if(ui->actionOnTop->isChecked()){
-	this->setWindowFlags(this->windowFlags()|Qt::ToolTip);
+#ifdef Q_OS_WIN
+	SetWindowPos(reinterpret_cast<HWND>(this->winId()), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+#endif
+	this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 	this->show();
   }else{
-	this->setWindowFlags(this->windowFlags()^Qt::ToolTip);
+#ifdef Q_OS_WIN
+	SetWindowPos(reinterpret_cast<HWND>(this->winId()), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+#endif
+	this->setWindowFlags(this->windowFlags() ^ Qt::WindowStaysOnTopHint);
 	this->show();
   }
 }
