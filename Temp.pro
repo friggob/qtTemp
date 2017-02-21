@@ -37,7 +37,8 @@ RESOURCES += \
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 win32:RC_ICONS += \
-    c.ico
+	c.ico \
+	c2.ico
 
 win32:QMAKE_TARGET_COMPANY += \
     "JFO Soft"
