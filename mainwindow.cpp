@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
   hd = new hostDialog(this);
   df = new debugForm(this);
   gd = new graphDialog(this);
+  mon = true;
 
   connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
   connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
@@ -55,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   readConfig();
   if(!oldPos.isNull()){
-	qDebug() << "Moving window to" << oldPos;
+	//qDebug() << "Moving window to" << oldPos;
 	this->move(oldPos);
   }
   setupRrd();
@@ -67,13 +68,13 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::setupRrd(){
   if(rrdPath.isNull() || rrdPath.isEmpty()){
 	QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-	qDebug() << "AppDataLocation:" << dir;
+	//qDebug() << "AppDataLocation:" << dir;
 	QDir d(dir);
 	if(!d.mkpath(d.absolutePath())){
 	  qWarning() << "Could not create appDataPath:" << dir;
 	}else{
 	  rrdPath = d.absoluteFilePath("Temp.rrd");
-	  qDebug() << "rrdPath:" << rrdPath;
+	  //qDebug() << "rrdPath:" << rrdPath;
 	}
   }
   if(rrdCmdPath.isNull() || rrdCmdPath.isEmpty()){
@@ -101,7 +102,7 @@ void MainWindow::setupRrd(){
 		<< "RRA:AVERAGE:0.5:1:43200"
 		<< "RRA:AVERAGE:0.5:1:525600";
 
-	qDebug() << "rrd tool args:" << rCa;
+	//qDebug() << "rrd tool args:" << rCa;
 
 	p.setProgram(rrdCmdPath);
 	p.setArguments(rCa);
@@ -125,7 +126,7 @@ void MainWindow::updateRrd(QString data){
   if(fi.isFile() && fi.isWritable()){
 	QProcess p;
 	p.startDetached(rrdCmdPath,rCa);
-	qDebug() << "rrdtool" << rCa;
+	//qDebug() << "rrdtool" << rCa;
   }
 }
 
@@ -169,39 +170,43 @@ void MainWindow::readConfig(){
   cSettings->sync();
   cSettings->beginGroup("net");
 
-  qDebug() << cSettings->fileName();
+  //qDebug() << cSettings->fileName();
 
   if((sValue = cSettings->value("hMon")).isValid()){
 	hi.hMon = sValue.toString();
-	qDebug() << "Setting hPi to" << hi.hMon;
+	//qDebug() << "Setting hPi to" << hi.hMon;
   }
   if((sValue = cSettings->value("pMon")).isValid()){
 	hi.pMon = sValue.toInt();
-	qDebug() << "Setting pPi to" << hi.pMon;
+	//qDebug() << "Setting pPi to" << hi.pMon;
   }
   if((sValue = cSettings->value("hTemp")).isValid()){
 	hi.hTemp = sValue.toString();
-	qDebug() << "Setting hTemp to" << hi.hTemp;
+	//qDebug() << "Setting hTemp to" << hi.hTemp;
   }
   if((sValue = cSettings->value("pTemp")).isValid()){
 	hi.pTemp = sValue.toInt();
-	qDebug() << "Setting pTemp to" << hi.pTemp;
+	//qDebug() << "Setting pTemp to" << hi.pTemp;
   }
   cSettings->endGroup();
   cSettings->beginGroup("main");
   if((sValue = cSettings->value("winPos")).isValid()){
 	oldPos = sValue.toPoint();
-	qDebug() << "Setting pos to" << oldPos;
+	//qDebug() << "Setting pos to" << oldPos;
+  }
+  if((sValue = cSettings->value("monitor")).isValid()){
+	mon = sValue.toBool();
+	//qDebug() << "Setting mon to" << mon;
   }
   cSettings->endGroup();
   cSettings->beginGroup("rrd");
   if((sValue = cSettings->value("rrdCmdPath")).isValid()){
 	rrdCmdPath = sValue.toString();
-	qDebug() << "Setting rrdCmdPath to" << rrdCmdPath;
+	//qDebug() << "Setting rrdCmdPath to" << rrdCmdPath;
   }
   if((sValue = cSettings->value("rrdPath")).isValid()){
 	rrdPath = sValue.toString();
-	qDebug() << "Setting rrdPath to" << rrdPath;
+	//qDebug() << "Setting rrdPath to" << rrdPath;
   }
   cSettings->endGroup();
 
@@ -227,10 +232,8 @@ void MainWindow::getTempNet(){
   socket->connectToHost(hi.hTemp, hi.pTemp);
 
   if(socket->waitForConnected(3000)){
-	qDebug() << "Connected!";
 
 	socket->waitForReadyRead(3000);
-	qDebug() << "Reading: " << socket->bytesAvailable();
 
 	data = socket->readAll();
 
@@ -239,7 +242,7 @@ void MainWindow::getTempNet(){
 
 	temp = QString::asprintf("% 2.2f",nt);
 
-	qDebug() << temp;
+	//qDebug() << temp;
 
 	socket->close();
   }
@@ -251,6 +254,9 @@ void MainWindow::getTempNet(){
 }
 
 void MainWindow::testNet(){
+  if(!mon){
+	return;
+  }
   QTcpSocket *s = new QTcpSocket(this);
 
   setAutoFillBackground(true);
@@ -258,11 +264,9 @@ void MainWindow::testNet(){
   s->connectToHost(hi.hMon,hi.pMon);
 
   if(s->waitForConnected(3000)){
-	qDebug() << "Mon is up!";
 	setPalette(dp);
 	s->close();
   }else{
-	qDebug() << "Mon is Down!";
 	setPalette(ep);
 	s->close();
   }
@@ -301,7 +305,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
 void MainWindow::updateHosts(hInfo hosts){
   hi = hosts;
   emit hInfoChanged(hi);
-  qDebug() << "Hosts updated";
+  //qDebug() << "Hosts updated";
 }
 
 void MainWindow::on_actionSet_host_triggered()
@@ -330,6 +334,7 @@ void MainWindow::on_actionSavecfg_triggered()
   cSettings->endGroup();
   cSettings->beginGroup("main");
   cSettings->setValue("winPos",this->pos());
+  cSettings->setValue("monitor",mon);
   cSettings->endGroup();
 
   cSettings->beginGroup("rrd");
@@ -385,4 +390,13 @@ void MainWindow::on_actionOnTop_triggered()
 void MainWindow::on_actionGraph_triggered()
 {
   gd->show();
+}
+
+void MainWindow::on_actionMonitor_triggered(bool checked)
+{
+  if(checked){
+	mon = true;
+  }else{
+	mon = false;
+  }
 }

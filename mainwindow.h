@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow
 	QPoint oldPos;
 	QString rrdCmdPath;
 	QString rrdPath;
+	bool mon;
 
   private slots:
 	void on_action_Quit_triggered();
@@ -72,6 +73,7 @@ class MainWindow : public QMainWindow
 	void on_action_About_triggered();
 	void on_actionOnTop_triggered();
 	void on_actionGraph_triggered();
+	void on_actionMonitor_triggered(bool checked);
 };
 
 #endif // MAINWINDOW_H
