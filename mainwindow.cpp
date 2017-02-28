@@ -150,6 +150,7 @@ void MainWindow::createMenu(){
 #ifdef Q_OS_WIN
   a += ui->actionOnTop;
 #endif
+  a += ui->actionMonitor;
   a += s;
   a += ui->action_Change;
   a += ui->actionSavecfg;
@@ -257,13 +258,15 @@ void MainWindow::testNet(){
   s->connectToHost(hi.hMon,hi.pMon);
 
   if(s->waitForConnected(3000)){
-	qDebug() << "Pi is up!";
+	qDebug() << "Mon is up!";
 	setPalette(dp);
 	s->close();
   }else{
-	qDebug() << "Pi is Down!";
+	qDebug() << "Mon is Down!";
 	setPalette(ep);
+	s->close();
   }
+  delete s;
 }
 
 void MainWindow::on_action_Quit_triggered()

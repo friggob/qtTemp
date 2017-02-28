@@ -145,6 +145,20 @@
     <string>Ctrl+G</string>
    </property>
   </action>
+  <action name="actionMonitor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Monitor</string>
+   </property>
+   <property name="toolTip">
+    <string>Monitoring active?</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
