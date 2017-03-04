@@ -49,19 +49,34 @@ void graphDialog::createPixmap(){
 
 
   rrdCmdArgs << "graph" << "-"
-			 <<"-S" << "60"
-			<< "-w" << "559"
-			<< "-h" << "250"
-			<< "-s" << QString::number(t.toTime_t())
-			<< "-e" << "now"
-			<< "DEF:temp="+fi.fileName()+":Temp:AVERAGE"
-			<< "LINE1:temp#0000FF"
-			<< "LINE1:0#FF0000";
+			 << "--border" << "0"
+			 << "-n" << "DEFAULT:8:Courier"
+			 //<< "-S" << QString::number(offset/60)
+			 << "-w" << "559"
+			 << "-h" << "250"
+			 << "-s" << QString::number(t.toTime_t())
+			 << "-e" << "now"
+			 << "DEF:temp="+fi.fileName()+":Temp:AVERAGE"
+			 << "VDEF:tempmax=temp,MAXIMUM"
+			 << "VDEF:tempmin=temp,MINIMUM"
+			 << "VDEF:tempcur=temp,LAST"
+			 << "LINE1:tempmax#00FFFF:Max\\:  "
+			 << "GPRINT:tempmax:% 2.2lf°C\\t"
+			 << "LINE1:tempmin#FF00FF:Min\\:  "
+			 << "GPRINT:tempmin:% 2.2lf°C\\n"
+			 << "LINE1:temp#0000FF:Last\\: "
+			 << "GPRINT:tempcur:% 2.2lf°C\\n"
+			 << "HRULE:0#000000";
 
   qDebug() << rrdCmdArgs;
 
   QDir::setCurrent(rrdDir.absolutePath());
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  env.insert("LC_TIME","sv_SE.UTF-8");
+
   QProcess *proc = new QProcess(this);
+
+  proc->setProcessEnvironment(env);
   proc->setProgram(rrdCmd);
   proc->setArguments(rrdCmdArgs);
   proc->start(QIODevice::ReadOnly);
