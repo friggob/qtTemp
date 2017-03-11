@@ -36,6 +36,12 @@ MainWindow::MainWindow(QWidget *parent) :
   gd = new graphDialog(this);
   mon = true;
 
+#ifdef Q_OS_WIN
+  rrdFont = "C:\\windows\\fonts\\monos.ttf";
+#else
+  rrdFont = "Courier";
+#endif
+  gd->setRrdFont(rrdFont);
   connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
   connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
   connect(timer,SIGNAL(timeout()), this, SLOT(getTempNet()));

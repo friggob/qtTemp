@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow
 	QPoint oldPos;
 	QString rrdCmdPath;
 	QString rrdPath;
+	QString rrdFont;
 	bool mon;
 
   private slots:

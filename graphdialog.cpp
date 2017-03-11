@@ -49,9 +49,10 @@ void graphDialog::createPixmap(){
 
 
   rrdCmdArgs << "graph" << "-"
+#ifndef Q_OS_WIN
 			 << "--border" << "0"
-			 << "-n" << "DEFAULT:8:Courier"
-			 //<< "-S" << QString::number(offset/60)
+#endif
+			 << "-n" << "DEFAULT:8:"+rrdFont
 			 << "-w" << "559"
 			 << "-h" << "250"
 			 << "-s" << QString::number(t.toTime_t())
@@ -106,6 +107,11 @@ void graphDialog::setRrdPath(QString p){
 
 void graphDialog::setRrdCmd(QString p){
   rrdCmd = p;
+}
+
+void graphDialog::setRrdFont(QString f)
+{
+  rrdFont = f;
 }
 
 void graphDialog::updateView(){

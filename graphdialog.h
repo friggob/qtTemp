@@ -20,6 +20,7 @@ class graphDialog : public QDialog
 	void setPixmap(QPixmap *);
 	void setRrdPath(QString);
 	void setRrdCmd(QString);
+	void setRrdFont(QString);
 	~graphDialog();
 
   private slots:
@@ -40,6 +41,7 @@ private:
 	QPixmap *qpm;
 	QString rrdPath;
 	QString rrdCmd;
+	QString rrdFont;
 	const int hour = 3600;
 	const int day = 24*hour;
 	const int week = 7*day;
