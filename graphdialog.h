@@ -56,6 +56,7 @@ private:
 	void rrdpathChanged();
 	void pixmapChanged();
 	void offsetChanged();
+	void rrdFontChanged(QString);
 };
 
 #endif // GRAPHDIALOG_H

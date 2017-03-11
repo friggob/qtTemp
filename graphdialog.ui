@@ -66,11 +66,16 @@
        </item>
        <item>
         <widget class="QFontComboBox" name="fontComboBox">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="editable">
           <bool>true</bool>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="maxVisibleItems">
           <number>15</number>

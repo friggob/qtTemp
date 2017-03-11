@@ -6,6 +6,7 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <QDir>
+#include <QFont>
 
 graphDialog::graphDialog(QWidget *parent) :
   QDialog(parent),
@@ -51,8 +52,9 @@ void graphDialog::createPixmap(){
   rrdCmdArgs << "graph" << "-"
 #ifndef Q_OS_WIN
 			 << "--border" << "0"
-#endif
 			 << "-n" << "DEFAULT:8:"+rrdFont
+			 << "-E"
+#endif
 			 << "-w" << "559"
 			 << "-h" << "250"
 			 << "-s" << QString::number(t.toTime_t())
@@ -62,7 +64,7 @@ void graphDialog::createPixmap(){
 			 << "VDEF:tempmin=temp,MINIMUM"
 			 << "VDEF:tempcur=temp,LAST"
 			 << "LINE1:tempmax#00FFFF:Max\\:  "
-			 << "GPRINT:tempmax:% 2.2lf&#176C\\t"
+			 << "GPRINT:tempmax:% 2.2lf°C\\t"
 			 << "LINE1:tempmin#FF00FF:Min\\:  "
 			 << "GPRINT:tempmin:% 2.2lf°C\\n"
 			 << "LINE1:temp#0000FF:Last\\: "
@@ -86,12 +88,12 @@ void graphDialog::createPixmap(){
 
   while(proc->waitForReadyRead()){
 	ret += proc->readAll();
-	qDebug() << "ret.count:" << ret.count();
+	//qDebug() << "ret.count:" << ret.count();
   }
 
   qpm->loadFromData(ret);
 
-  qDebug() << "qpm.size:" << qpm->size();
+  //qDebug() << "qpm.size:" << qpm->size();
 
   emit pixmapChanged();
 
@@ -125,7 +127,9 @@ void graphDialog::updateView(){
 }
 
 void graphDialog::showEvent(QShowEvent *event){
+  QFont f(rrdFont);
   QDialog::showEvent(event);
+  ui->fontComboBox->setCurrentFont(f);
   emit updateView();
 }
 
@@ -200,7 +204,10 @@ void graphDialog::on_spinBox_valueChanged(int arg1)
 void graphDialog::on_fontComboBox_activated(const QString &arg1)
 {
   qDebug() << arg1;
-#ifndef Q_OS_WIN
-  rrdFont = arg1;
+#ifdef Q_OS_WIN
+  return;
 #endif
+  rrdFont = arg1;
+  emit createPixmap();
+  emit rrdFontChanged(arg1);
 }

@@ -36,12 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
   gd = new graphDialog(this);
   mon = true;
 
-#ifdef Q_OS_WIN
-  rrdFont = "C:\\windows\\fonts\\monos.ttf";
-#else
-  rrdFont = "Courier";
-#endif
-  gd->setRrdFont(rrdFont);
+  connect(gd,SIGNAL(rrdFontChanged(QString)),this,SLOT(setRrdFont(QString)));
   connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
   connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
   connect(timer,SIGNAL(timeout()), this, SLOT(getTempNet()));
@@ -71,6 +66,19 @@ MainWindow::MainWindow(QWidget *parent) :
   testNet();
 }
 
+void MainWindow::setRrdFont(QString f)
+{
+  rrdFont = f;
+  qDebug() << "Setting rrdFont to" << f;
+  cSettings->sync();
+  cSettings->beginGroup("rrd");
+  if(!rrdFont.isEmpty() && !rrdFont.isNull()){
+	cSettings->setValue("rrdFont",rrdFont);
+  }
+  cSettings->endGroup();
+  cSettings->sync();
+}
+
 void MainWindow::setupRrd(){
   if(rrdPath.isNull() || rrdPath.isEmpty()){
 	QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -91,6 +99,16 @@ void MainWindow::setupRrd(){
 #endif
   }
   gd->setRrdCmd(rrdCmdPath);
+
+  if(rrdFont.isNull() || rrdFont.isEmpty()){
+#ifdef Q_OS_WIN
+	rrdFont = "C:\\windows\\fonts\\monos.ttf";
+#else
+	rrdFont = "Liberation Mono";
+#endif
+  }
+  gd->setRrdFont(rrdFont);
+
   QFileInfo fi(rrdPath);
 
   if(!fi.exists()){
@@ -213,6 +231,9 @@ void MainWindow::readConfig(){
   if((sValue = cSettings->value("rrdPath")).isValid()){
 	rrdPath = sValue.toString();
 	//qDebug() << "Setting rrdPath to" << rrdPath;
+  }
+  if((sValue = cSettings->value("rrdFont")).isValid()){
+	rrdFont = sValue.toString();
   }
   cSettings->endGroup();
 
@@ -349,6 +370,9 @@ void MainWindow::on_actionSavecfg_triggered()
   }
   if(!rrdPath.isEmpty() && !rrdPath.isNull()){
 	cSettings->setValue("rrdPath",rrdPath);
+  }
+  if(!rrdFont.isEmpty() && !rrdFont.isNull()){
+	cSettings->setValue("rrdFont",rrdFont);
   }
   cSettings->endGroup();
 

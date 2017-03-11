@@ -25,10 +25,10 @@ class MainWindow : public QMainWindow
 
   public slots:
 	void updateHosts(hInfo);
+	void setRrdFont(QString f);
 
   signals:
 	void hInfoChanged(hInfo);
-
 
   private:
 	Ui::MainWindow *ui;
