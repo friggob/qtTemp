@@ -62,7 +62,7 @@ void graphDialog::createPixmap(){
 			 << "VDEF:tempmin=temp,MINIMUM"
 			 << "VDEF:tempcur=temp,LAST"
 			 << "LINE1:tempmax#00FFFF:Max\\:  "
-			 << "GPRINT:tempmax:% 2.2lf°C\\t"
+			 << "GPRINT:tempmax:% 2.2lf&#176C\\t"
 			 << "LINE1:tempmin#FF00FF:Min\\:  "
 			 << "GPRINT:tempmin:% 2.2lf°C\\n"
 			 << "LINE1:temp#0000FF:Last\\: "
@@ -195,4 +195,12 @@ void graphDialog::on_spinBox_valueChanged(int arg1)
 	offset = arg1 * hour;
 	emit offsetChanged();
   }
+}
+
+void graphDialog::on_fontComboBox_activated(const QString &arg1)
+{
+  qDebug() << arg1;
+#ifndef Q_OS_WIN
+  rrdFont = arg1;
+#endif
 }

@@ -36,6 +36,8 @@ class graphDialog : public QDialog
 
 	void on_spinBox_valueChanged(int arg1);
 
+	void on_fontComboBox_activated(const QString &arg1);
+
 private:
 	Ui::graphDialog *ui;
 	QPixmap *qpm;
