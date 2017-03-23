@@ -102,7 +102,7 @@ void MainWindow::setupRrd(){
 
   if(rrdFont.isNull() || rrdFont.isEmpty()){
 #ifdef Q_OS_WIN
-	rrdFont = "C:\\windows\\fonts\\monos.ttf";
+	rrdFont = "C:\\windows\\fonts\\cour.ttf";
 #else
 	rrdFont = "Liberation Mono";
 #endif
