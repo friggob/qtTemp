@@ -130,7 +130,7 @@ void graphDialog::showEvent(QShowEvent *event){
   QFont f(rrdFont);
   QDialog::showEvent(event);
   ui->fontComboBox->setCurrentFont(f);
-  emit updateView();
+  this->createPixmap();
 }
 
 void graphDialog::setPixmap(QPixmap *pm){
