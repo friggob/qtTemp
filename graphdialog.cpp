@@ -7,6 +7,16 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QFont>
+#include <QTimeZone>
+#include <QMessageBox>
+
+#define NOW QDateTime::currentDateTime().toTime_t()
+#define SNOW(X) QDateTime::currentDateTime().addSecs(X).toTime_t()
+#define DNOW(X) QDateTime::currentDateTime().addDays(X).toTime_t()
+#define MNOW(X) QDateTime::currentDateTime().addMonths(X).toTime_t()
+#define YNOW(X) QDateTime::currentDateTime().addYears(X).toTime_t()
+#define DFROM ui->dateTimeEditFrom->dateTime()
+#define DTO ui->dateTimeEditTo->dateTime()
 
 graphDialog::graphDialog(QWidget *parent) :
   QDialog(parent),
@@ -18,7 +28,6 @@ graphDialog::graphDialog(QWidget *parent) :
 #else
   rrdCmd = "rrdtool.exe";
 #endif
-  offset = hour;
   ui->setupUi(this);
   addAction(ui->actionClose);
   QGraphicsScene *sc = new QGraphicsScene(ui->graphicsView);
@@ -27,6 +36,14 @@ graphDialog::graphDialog(QWidget *parent) :
   connect(this,SIGNAL(rrdpathChanged()),this,SLOT(createPixmap()));
   connect(this,SIGNAL(offsetChanged()),this,SLOT(createPixmap()));
   ui->hourButton->setChecked(true);
+  setDateTimeEdit(SNOW(-3600),
+				  NOW);
+
+}
+
+void graphDialog::setDateTimeEdit(qint64 secFrom, qint64 secTo){
+  ui->dateTimeEditTo->setDateTime(QDateTime::fromTime_t(secTo,QTimeZone::systemTimeZone()));
+  ui->dateTimeEditFrom->setDateTime(QDateTime::fromTime_t(secFrom,QTimeZone::systemTimeZone()));
 }
 
 void graphDialog::createPixmap(){
@@ -43,11 +60,12 @@ void graphDialog::createPixmap(){
   QDir oldDir;
 
   QStringList rrdCmdArgs;
-  QDateTime t;
+  QDateTime fTime,tTime;
   QByteArray ret;
 
-  t.setTime_t(QDateTime::currentDateTime().toTime_t()-offset);
-
+  //t.setTime_t(QDateTime::currentDateTime().toTime_t()-offset);
+  fTime = DFROM;
+  tTime = DTO;
 
   rrdCmdArgs << "graph" << "-"
 #ifndef Q_OS_WIN
@@ -57,8 +75,8 @@ void graphDialog::createPixmap(){
 #endif
 			 << "-w" << "559"
 			 << "-h" << "250"
-			 << "-s" << QString::number(t.toTime_t())
-			 << "-e" << "now"
+			 << "-s" << QString::number(fTime.toTime_t())
+			 << "-e" << QString::number(tTime.toTime_t())
 			 << "DEF:temp="+fi.fileName()+":Temp:AVERAGE"
 			 << "VDEF:tempmax=temp,MAXIMUM"
 			 << "VDEF:tempmin=temp,MINIMUM"
@@ -155,8 +173,10 @@ void graphDialog::on_actionClose_triggered()
 
 void graphDialog::on_hourButton_clicked(bool checked)
 {
+  qint64 offset;
   if(checked){
 	offset = ui->spinBox->value() * hour;
+	setDateTimeEdit(SNOW(-offset),NOW);
 	emit offsetChanged();
   }
 }
@@ -164,7 +184,7 @@ void graphDialog::on_hourButton_clicked(bool checked)
 void graphDialog::on_dayButton_clicked(bool checked)
 {
   if(checked){
-	offset = day;
+	setDateTimeEdit(DNOW(-1),NOW);
 	emit offsetChanged();
   }
 }
@@ -172,7 +192,7 @@ void graphDialog::on_dayButton_clicked(bool checked)
 void graphDialog::on_weekButton_clicked(bool checked)
 {
   if(checked){
-	offset = week;
+	setDateTimeEdit(DNOW(-7),NOW);
 	emit offsetChanged();
   }
 }
@@ -180,7 +200,7 @@ void graphDialog::on_weekButton_clicked(bool checked)
 void graphDialog::on_monthButton_clicked(bool checked)
 {
   if(checked){
-	offset = month;
+	setDateTimeEdit(MNOW(-1),NOW);
 	emit offsetChanged();
   }
 }
@@ -188,15 +208,17 @@ void graphDialog::on_monthButton_clicked(bool checked)
 void graphDialog::on_yearButton_clicked(bool checked)
 {
   if(checked){
-	offset = year;
+	setDateTimeEdit(YNOW(-1),NOW);
 	emit offsetChanged();
   }
 }
 
 void graphDialog::on_spinBox_valueChanged(int arg1)
 {
+  qint64 offset;
   if(ui->hourButton->isChecked()){
 	offset = arg1 * hour;
+	setDateTimeEdit(SNOW(-offset),NOW);
 	emit offsetChanged();
   }
 }
@@ -210,4 +232,33 @@ void graphDialog::on_fontComboBox_activated(const QString &arg1)
   rrdFont = arg1;
   emit createPixmap();
   emit rrdFontChanged(arg1);
+}
+
+void graphDialog::on_pushButton_clicked()
+{
+  if(DFROM > DTO){
+	qDebug() << "Error! From cannot be later than To!";
+  }else{
+	emit offsetChanged();
+  }
+}
+
+void graphDialog::on_dateTimeEditTo_dateTimeChanged(const QDateTime &dateTime)
+{
+  if(dateTime < DFROM){
+	QMessageBox::critical(this,"Wrong date!","To date cannot be earlier than From date!");
+	ui->dateTimeEditTo->setDateTime(DFROM);
+  }else{
+	emit offsetChanged();
+  }
+}
+
+void graphDialog::on_dateTimeEditFrom_dateTimeChanged(const QDateTime &dateTime)
+{
+  if(dateTime > DTO){
+	QMessageBox::critical(this,"Wrong date!","From date cannot be later than To date!");
+	ui->dateTimeEditFrom->setDateTime(DTO);
+  }else{
+	emit offsetChanged();
+  }
 }

@@ -33,24 +33,21 @@ class graphDialog : public QDialog
 	void on_weekButton_clicked(bool checked);
 	void on_monthButton_clicked(bool checked);
 	void on_yearButton_clicked(bool checked);
-
 	void on_spinBox_valueChanged(int arg1);
-
 	void on_fontComboBox_activated(const QString &arg1);
+	void on_pushButton_clicked();
+	void on_dateTimeEditTo_dateTimeChanged(const QDateTime &dateTime);
+	void on_dateTimeEditFrom_dateTimeChanged(const QDateTime &dateTime);
 
-private:
+  private:
 	Ui::graphDialog *ui;
 	QPixmap *qpm;
 	QString rrdPath;
 	QString rrdCmd;
 	QString rrdFont;
 	const int hour = 3600;
-	const int day = 24*hour;
-	const int week = 7*day;
-	const int month = 30*day;
-	const int year = 365*day;
-	int offset;
 	void showEvent(QShowEvent *);
+	void setDateTimeEdit(qint64,qint64);
 
   signals:
 	void rrdpathChanged();
