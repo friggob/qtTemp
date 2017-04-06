@@ -5,6 +5,7 @@
 #include "hostdialog.h"
 #include "debugform.h"
 #include "graphdialog.h"
+#include "rrddialog.h"
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QSettings>
@@ -36,6 +37,7 @@ class MainWindow : public QMainWindow
 	hostDialog *hd;
 	debugForm *df;
 	graphDialog *gd;
+	rrdDialog *rd;
 
 	void setTemp(void);
 	void readConfig();
@@ -75,6 +77,8 @@ class MainWindow : public QMainWindow
 	void on_actionOnTop_triggered();
 	void on_actionGraph_triggered();
 	void on_actionMonitor_triggered(bool checked);
+	void on_actionRrdConfig_triggered();
+	void rrdConfigChanged(QString rp, QString rcp);
 };
 
 #endif // MAINWINDOW_H

@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QDateTime>
+#include <QMenu>
 
 #ifdef Q_OS_WIN
 #include "windows.h"
@@ -34,11 +35,13 @@ MainWindow::MainWindow(QWidget *parent) :
   hd = new hostDialog(this);
   df = new debugForm(this);
   gd = new graphDialog(this);
+  rd = new rrdDialog(this);
   mon = true;
 
+  connect(rd,SIGNAL(rrdConfigChanged(QString,QString)),this,SLOT(rrdConfigChanged(QString,QString)));
   connect(gd,SIGNAL(rrdFontChanged(QString)),this,SLOT(setRrdFont(QString)));
   connect(hd,SIGNAL(hostsChanged(hInfo)),this,SLOT(updateHosts(hInfo)));
-  connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
+  //connect(this,SIGNAL(hInfoChanged(hInfo)),df,SLOT(setData(hInfo)));
   connect(timer,SIGNAL(timeout()), this, SLOT(getTempNet()));
   connect(timer,SIGNAL(timeout()), this, SLOT(testNet()));
 
@@ -64,6 +67,21 @@ MainWindow::MainWindow(QWidget *parent) :
   createMenu();
   getTempNet();
   testNet();
+}
+
+void MainWindow::rrdConfigChanged(QString rp, QString rcp){
+  rrdPath = rp;
+  rrdCmdPath = rcp;
+
+  cSettings->sync();
+  cSettings->beginGroup("rrd");
+  cSettings->setValue("rrdPath",rrdPath);
+  cSettings->setValue("rrdCmdPath",rrdCmdPath);
+  cSettings->endGroup();
+  cSettings->sync();
+
+  gd->setRrdCmd(rrdCmdPath);
+  gd->setRrdPath(rrdPath);
 }
 
 void MainWindow::setRrdFont(QString f)
@@ -161,6 +179,23 @@ void MainWindow::createMenu(){
   QAction *s = new QAction(this);
   QAction *s1 = new QAction(this);
   QAction *s2 = new QAction(this);
+  QAction *confAction = new QAction(this);
+
+  QMenu *confMenu = new QMenu("Config",this);
+
+  a += ui->actionSet_host;
+  a += ui->actionRrdConfig;
+  a += ui->actionSavecfg;
+  a += ui->actionPrint;
+  a += ui->action_Change;
+
+  confMenu->addActions(a);
+
+  confAction->setText("Config");
+  confAction->setMenu(confMenu);
+
+  a.clear();
+
   s->setSeparator(true);
   s1->setSeparator(true);
   s2->setSeparator(true);
@@ -171,15 +206,12 @@ void MainWindow::createMenu(){
 #endif
   a += ui->actionGraph;
   a += ui->action_Update;
-  a += ui->actionSet_host;
 #ifdef Q_OS_WIN
   a += ui->actionOnTop;
 #endif
   a += ui->actionMonitor;
   a += s;
-  a += ui->action_Change;
-  a += ui->actionSavecfg;
-  a += ui->actionPrint;
+  a += confAction;
   a += s1;
   a += ui->action_About;
   a += s2;
@@ -386,10 +418,12 @@ void MainWindow::on_actionPrint_triggered()
   p.setX(this->x()-df->width());
   p.setY(this->y());
 
+  //qDebug() << cSettings->organizationName() << cSettings->applicationName();
+
+  df->setData(cSettings->organizationName(),cSettings->applicationName());
+
   df->show();
   df->move(p);
-
-  emit hInfoChanged(hi);
 }
 
 void MainWindow::on_action_About_triggered()
@@ -429,4 +463,11 @@ void MainWindow::on_actionMonitor_triggered(bool checked)
   }else{
 	mon = false;
   }
+}
+
+void MainWindow::on_actionRrdConfig_triggered()
+{
+  rd->setRrdPath(rrdPath);
+  rd->setRrdCmdPath(rrdCmdPath);
+  rd->show();
 }

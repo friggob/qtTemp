@@ -18,18 +18,21 @@ SOURCES += main.cpp\
     hostdialog.cpp \
     hinfo.cpp \
     debugform.cpp \
-    graphdialog.cpp
+    graphdialog.cpp \
+    rrddialog.cpp
 
 HEADERS  += mainwindow.h \
     hostdialog.h \
     hinfo.h \
     debugform.h \
-    graphdialog.h
+    graphdialog.h \
+    rrddialog.h
 
 FORMS    += mainwindow.ui \
     hostdialog.ui \
     debugform.ui \
-    graphdialog.ui
+    graphdialog.ui \
+    rrddialog.ui
 
 RESOURCES += \
     qttemp.qrc

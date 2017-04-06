@@ -94,7 +94,7 @@
     <string>&amp;Reread cfg</string>
    </property>
    <property name="toolTip">
-    <string>Reread onfig file</string>
+    <string>Re-read onfig file</string>
    </property>
   </action>
   <action name="actionSet_host">
@@ -141,6 +141,9 @@
    <property name="text">
     <string>Graph</string>
    </property>
+   <property name="toolTip">
+    <string>Open graph dialog</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
    </property>
@@ -157,6 +160,14 @@
    </property>
    <property name="toolTip">
     <string>Monitoring active?</string>
+   </property>
+  </action>
+  <action name="actionRrdConfig">
+   <property name="text">
+    <string>Set rrdConfig</string>
+   </property>
+   <property name="toolTip">
+    <string>Set configs for rrdtool</string>
    </property>
   </action>
  </widget>

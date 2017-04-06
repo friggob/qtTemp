@@ -10,8 +10,6 @@ debugForm::debugForm(QWidget *parent) :
 
   addAction(ui->actionQuit);
 
-  //QObject::connect(parent,SIGNAL(hInfoChanged(hInfo)),this,SLOT(setData(hInfo)));
-
 }
 
 debugForm::~debugForm()
@@ -19,12 +17,25 @@ debugForm::~debugForm()
   delete ui;
 }
 
-void debugForm::setData(hInfo hosts){
-  qDebug() << "Setting data";
-  ui->hMonLabel->setText(hosts.hMon);
-  ui->hTempLabel->setText(hosts.hTemp);
-  ui->pMonLabel->setText(QString::number(hosts.pMon));
-  ui->pTempLabel->setText(QString::number(hosts.pTemp));
+void debugForm::showEvent(QShowEvent *event){
+  QListWidget *lw;
+  QString t;
+  QString key;
+  lw = ui->listWidget;
+
+  QDialog::showEvent(event);
+
+  foreach (key, settings->allKeys()) {
+	//t = key + ": " + settings->value(key).toString();
+	t =  QString("%1: %2").arg(key,-15).arg(settings->value(key).toString());
+	lw->addItem(t);
+  }
+
+  lw->show();
+}
+
+void debugForm::setData(QString org, QString app){
+  settings = new QSettings(org,app);
 }
 
 void debugForm::on_actionQuit_triggered()

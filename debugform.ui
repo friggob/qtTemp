@@ -6,13 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>260</width>
-    <height>75</height>
+    <width>235</width>
+    <height>222</height>
    </rect>
   </property>
   <property name="font">
    <font>
+    <family>Liberation Mono</family>
     <pointsize>8</pointsize>
+    <weight>75</weight>
+    <italic>false</italic>
+    <bold>true</bold>
    </font>
   </property>
   <property name="contextMenuPolicy">
@@ -21,134 +25,33 @@
   <property name="windowTitle">
    <string>Current config</string>
   </property>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>30</y>
-     <width>41</width>
-     <height>16</height>
-    </rect>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>5</number>
    </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
+   <property name="leftMargin">
+    <number>5</number>
    </property>
-   <property name="text">
-    <string>Mon:</string>
+   <property name="topMargin">
+    <number>5</number>
    </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>50</y>
-     <width>41</width>
-     <height>16</height>
-    </rect>
+   <property name="rightMargin">
+    <number>5</number>
    </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
+   <property name="bottomMargin">
+    <number>5</number>
    </property>
-   <property name="text">
-    <string>Temp:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>10</y>
-     <width>64</width>
-     <height>15</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Hostname</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>10</y>
-     <width>31</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Port</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="hMonLabel">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>30</y>
-     <width>131</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="hTempLabel">
-   <property name="geometry">
-    <rect>
-     <x>60</x>
-     <y>50</y>
-     <width>131</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="pMonLabel">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>30</y>
-     <width>31</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="pTempLabel">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>50</y>
-     <width>31</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
+   <item>
+    <widget class="QListWidget" name="listWidget">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="resizeMode">
+      <enum>QListView::Adjust</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
   <action name="actionQuit">
    <property name="text">
     <string>&amp;Close</string>
