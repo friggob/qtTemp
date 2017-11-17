@@ -23,6 +23,8 @@ void debugForm::showEvent(QShowEvent *event){
   QString key;
   lw = ui->listWidget;
 
+  lw->clear();
+
   QDialog::showEvent(event);
 
   foreach (key, settings->allKeys()) {
